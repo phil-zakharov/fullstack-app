@@ -1,11 +1,15 @@
-import { Flex } from '@radix-ui/themes';
+import { Container } from '@mui/material';
 import { Header } from '~/widgets/Header';
 
 export function MainLayout({ children }: React.PropsWithChildren) {
   return (
-    <Flex direction='column'>
+    <Container
+      maxWidth="lg"
+      component="main"
+      sx={{ display: 'flex', flexDirection: 'column', p: 0 }}
+    >
       <Header />
       {children}
-    </Flex>
+    </Container>
   );
 }
