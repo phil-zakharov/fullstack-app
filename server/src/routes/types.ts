@@ -1,14 +1,22 @@
 /** @format */
 
-import http from 'node:http';
+import { IncomingMessage, ServerResponse } from 'node:http';
 
-export type Route = (
-  request: http.IncomingMessage,
-  res: http.ServerResponse<http.IncomingMessage>,
+export type RouteHandler = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  params?: Record<string, string>,
 ) => void;
 
-export type NestedRoute = (
-  path: string[],
-  request: http.IncomingMessage,
-  res: http.ServerResponse<http.IncomingMessage>,
-) => void;
+type Method =
+  | 'GET'
+  | 'HEAD'
+  | 'POST'
+  | 'PUT'
+  | 'DELETE'
+  | 'CONNECT'
+  | 'OPTIONS'
+  | 'TRACE'
+  | 'PATCH';
+
+export type Route = Record<string, any>;
