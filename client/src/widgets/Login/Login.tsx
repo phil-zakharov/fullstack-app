@@ -94,13 +94,13 @@ export function Login() {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={() => setDialogType('login')}>Login</MenuItem>
-            <MenuItem onClick={() => setDialogType('sign_in')}>Sign in</MenuItem>
+            <MenuItem onClick={() => setDialogType('login')}>Log in</MenuItem>
+            <MenuItem onClick={() => setDialogType('sign_in')}>Sign up</MenuItem>
           </Menu>
         )}
       </div>
       <Dialog open={dialogType === 'sign_in'} onClose={() => setDialogType('closed')}>
-        <DialogTitle>Sign in</DialogTitle>
+        <DialogTitle>Sign up</DialogTitle>
         <DialogContent>
           <Box
             component="form"
