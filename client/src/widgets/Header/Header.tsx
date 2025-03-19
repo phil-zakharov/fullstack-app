@@ -4,7 +4,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Login } from '../Login';
+import { Auth } from '../Auth';
 
 export function Header() {
   return (
@@ -18,7 +18,7 @@ export function Header() {
             Photos
           </Typography>
           <div>
-            <Login />
+            <Auth />
           </div>
         </Toolbar>
       </AppBar>

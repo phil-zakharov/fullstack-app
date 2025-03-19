@@ -1,36 +1,14 @@
-import {
-  Avatar,
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Menu,
-  MenuItem,
-  Popover,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Avatar, IconButton, Menu, MenuItem, Popover, Typography } from '@mui/material';
 import { deepPurple } from '@mui/material/colors';
 import { useState } from 'react';
 import { useUserStore } from '~/shared/store/user';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useForm } from 'react-hook-form';
-import { useCreateUserMutation } from '~/shared/api/user';
+import { DialogType } from './types';
+import { SignUp } from '~/features/user/sign_up';
+import { Login } from '~/features/user/login';
 
-type DialogType = 'sign_in' | 'login' | 'closed';
-
-type Form = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-export function Login() {
+export function Auth() {
   const { isAuth, avatarUrl, name } = useUserStore();
-
-  const [createUser] = useCreateUserMutation()
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [dialogType, setDialogType] = useState<DialogType>('closed');
@@ -45,13 +23,6 @@ export function Login() {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
-
-  const onSubmit = (form: Form) => {
-    console.log(form);
-    createUser(form)
-  };
-
-  const { register, handleSubmit } = useForm<Form>({});
 
   return (
     <>
@@ -95,30 +66,12 @@ export function Login() {
             onClose={handleClose}
           >
             <MenuItem onClick={() => setDialogType('login')}>Log in</MenuItem>
-            <MenuItem onClick={() => setDialogType('sign_in')}>Sign up</MenuItem>
+            <MenuItem onClick={() => setDialogType('sign_up')}>Sign up</MenuItem>
           </Menu>
         )}
       </div>
-      <Dialog open={dialogType === 'sign_in'} onClose={() => setDialogType('closed')}>
-        <DialogTitle>Sign up</DialogTitle>
-        <DialogContent>
-          <Box
-            component="form"
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 1 }}
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <TextField variant="outlined" label="name" {...register('name')} />
-            <TextField variant="outlined" label="email" {...register('email')} />
-            <TextField
-              variant="outlined"
-              label="password"
-              type="password"
-              {...register('password')}
-            />
-            <Button type="submit">Submit</Button>
-          </Box>
-        </DialogContent>
-      </Dialog>
+      <SignUp isOpen={dialogType === 'sign_up'} onClose={() => setDialogType('closed')} />
+      <Login isOpen={dialogType === 'login'} onClose={() => setDialogType('closed')} />
     </>
   );
 }
