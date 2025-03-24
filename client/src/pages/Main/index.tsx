@@ -1,3 +1,9 @@
+import { Button } from '@mui/material';
+import { useLazyGetAllQuery } from '~/features/post/api';
+
 export default function MainPage() {
-  return <div>MainPage</div>;
+  const [getAll] = useLazyGetAllQuery()
+  return <div>MainPage
+    <Button onClick={() => getAll('')}>get all</Button>
+  </div>;
 }

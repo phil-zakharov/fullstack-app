@@ -1,7 +1,7 @@
 import { Alert, Box, Button, Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { useForm } from 'react-hook-form';
-import { useLoginMutation } from '~/shared/api/user';
+import { useLoginMutation } from '~/features/user/api';
 import { LoginForm } from '../types';
 import { loginSch } from '../model/validation';
 import { RequestError } from '~/shared/request_types';
@@ -12,8 +12,7 @@ type Props = {
 };
 
 export const Login = ({ isOpen, onClose }: Props) => {
-  const [login, { data, isError, error }] = useLoginMutation();
-  console.log(' data:', data, error);
+  const [login, { isError, error }] = useLoginMutation();
 
   const {
     register,

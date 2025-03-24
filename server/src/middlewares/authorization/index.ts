@@ -10,49 +10,25 @@ const ACCESS_TOKEN_LIFETIME = process.env.ACCESS_TOKEN_LIFETIME || '15m';
 const REFRESH_TOKEN_LIFETIME = process.env.REFRESH_TOKEN_LIFETIME || '7d';
 
 export async function authorization(req: IncomingMessage, res: ServerResponse, cb: (req: IncomingMessage, res: ServerResponse) => void) {
-  if (req.url === '/login') {
-    if (req.method === 'POST') {
-      const body = await getBody<{ email: string; password: string }>(req);
+  if (req.url !== '/login' && req.url !== '/signup') {
+    const authHeader = req.headers.authorization;
+    console.log(' authHeader:', authHeader);
 
-      const user = await prisma.user.findFirst({
-        where: {
-          email: body.email,
-        },
-      });
-
-      if (user && user.password === body.password) {
-        const accessToken = generateAccessToken({ username: user.email });
-        const refreshToken = generateRefreshToken({ username: user.email });
-
-        res.setHeader("Authorization", `Bearer ${accessToken}`);
-        res.setHeader(
-          'Set-Cookie',
-          `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/refresh`,
-        );
-        cb(req, res);
-      } else {
-        sendResponse(res, 404, { error: 'user not found' });
-      }
-    } else {
-      sendResponse(res, 401, { error: 'unauthorized' });
+    if (!authHeader || !authHeader.startsWith('Bearer')) {
+      console.log('authHeader error');
+      return;
     }
-  } else {
+
+    const token = authHeader.split(" ")[1];
+    const decoded = verifyToken(token, SECRET);
+    console.log(' decoded:', decoded);
+
+    if (!decoded) {
+      console.log('decoded error');
+      return;
+    }
   }
 }
-
-const refreshTokens = new Set<string>(); // Храним refresh-токены
-
-const generateAccessToken = (payload: object) => {
-  return sign({}, SECRET, { expiresIn: ACCESS_TOKEN_LIFETIME as unknown as number });
-};
-
-const generateRefreshToken = (payload: object) => {
-  const refreshToken = sign(payload, REFRESH_SECRET, {
-    expiresIn: REFRESH_TOKEN_LIFETIME as unknown as number,
-  });
-  refreshTokens.add(refreshToken); // Добавляем в хранилище
-  return refreshToken;
-};
 
 const verifyToken = (token: string, secret: string): JwtPayload | string | null => {
   try {

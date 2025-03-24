@@ -1,6 +1,6 @@
 import { Box, Button, Dialog, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { useSignUpMutation } from '~/shared/api/user';
+import { useSignUpMutation } from '~/features/user/api';
 import { SignUpForm } from '../types';
 import { signUpSch } from '../model/validation';
 
