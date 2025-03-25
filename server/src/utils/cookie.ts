@@ -1,4 +1,4 @@
-import { ServerResponse } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
 
 type Params = {
   httpOnly?: boolean;
@@ -47,4 +47,18 @@ export function setCookie(res: ServerResponse, ...cookieArr: Cookie[]) {
   }
 
   res.setHeader('Set-Cookie', allCookie);
+}
+
+export const getCookie = (req: IncomingMessage) => {
+  const { cookie } = req.headers;
+  const cookieObj: Record<string, string> = {};
+
+  if (cookie) {
+    cookie.split(';').forEach((el) => {
+      const [key, value] = el.split('=');
+      cookieObj[key.trim()] = value;
+    });
+  }
+
+  return cookieObj;
 }

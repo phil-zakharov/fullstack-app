@@ -1,27 +1,38 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { User } from '~/shared/api_types';
 
 export interface UserState {
   isAuth: boolean;
-  name: string | null;
-  email: string | null;
-  avatarUrl: string | null;
+  accessToken: string | null;
+  user: User | null;
 }
 
 const initialState: UserState = {
   isAuth: false,
-  name: null,
-  email: null,
-  avatarUrl: null,
-}
+  accessToken: null,
+  user: null,
+};
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser() {}
-  }
-})
+    saveUser(state, action: PayloadAction<{ accessToken: string; user: User }>) {
+      state.accessToken = action.payload.accessToken;
+      state.user = action.payload.user;
+      state.isAuth = true;
+    },
+    setToken(state, action: PayloadAction<string>) {
+      state.accessToken = action.payload;
+    },
+    removeUser(state) {
+      state.accessToken = null;
+      state.user = null;
+      state.isAuth = false;
+    },
+  },
+});
 
-export const { setUser } = userSlice.actions;
+export const { saveUser, removeUser, setToken } = userSlice.actions;
 
-export default userSlice.reducer
+export default userSlice.reducer;

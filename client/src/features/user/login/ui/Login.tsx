@@ -22,6 +22,15 @@ export const Login = ({ isOpen, onClose }: Props) => {
     resolver: loginSch,
   });
 
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      await login(data);
+      onClose();
+    } catch (error) {
+      console.log('error', error)
+    }
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose}>
       <DialogTitle>Login</DialogTitle>
@@ -29,7 +38,7 @@ export const Login = ({ isOpen, onClose }: Props) => {
         <Box
           component="form"
           sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 1 }}
-          onSubmit={handleSubmit(login)}
+          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
             variant="outlined"

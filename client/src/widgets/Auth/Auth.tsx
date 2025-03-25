@@ -8,7 +8,7 @@ import { SignUp } from '~/features/user/sign_up';
 import { Login } from '~/features/user/login';
 
 export function Auth() {
-  const { isAuth, avatarUrl, name } = useUserStore();
+  const { isAuth, user } = useUserStore();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [dialogType, setDialogType] = useState<DialogType>('closed');
@@ -27,15 +27,18 @@ export function Auth() {
   return (
     <>
       <div>
-        <IconButton aria-describedby={id} onClick={handleClick}>
-          {isAuth ? (
-            <Avatar alt={name || ''} src={avatarUrl || ''} />
-          ) : (
+        {isAuth ? (
+          <IconButton>
+            <Typography>{user?.name}</Typography>
+            <Avatar alt={user?.name || ''} src={user?.avatar || ''} />
+          </IconButton>
+        ) : (
+          <IconButton aria-describedby={id} onClick={handleClick}>
             <Avatar sx={{ bgcolor: deepPurple[500] }}>
               <AccountCircleIcon />
             </Avatar>
-          )}
-        </IconButton>
+          </IconButton>
+        )}
         {isAuth ? (
           <Popover
             id={id}

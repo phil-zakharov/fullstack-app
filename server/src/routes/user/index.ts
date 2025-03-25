@@ -9,6 +9,9 @@ export const userRoutes: Route = {
     POST: userController.log_in
   },
   logout: {
-    GET: () => {}
+    GET: userController.log_out
+  },
+  refresh: {
+    GET: userController.refresh
   }
 }

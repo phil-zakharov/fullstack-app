@@ -1,39 +1,24 @@
-import { prisma } from '#config/db.ts';
-import { getBody } from '#utils/body.ts';
-import { sendResponse } from '#utils/response.ts';
+import { verifyAccessToken } from '#utils/jwtToken.ts';
 import { IncomingMessage, ServerResponse } from 'http';
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
 
-const SECRET = process.env.JWT_SECRET || 'default_access_secret';
-const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'default_refresh_secret';
-const ACCESS_TOKEN_LIFETIME = process.env.ACCESS_TOKEN_LIFETIME || '15m';
-const REFRESH_TOKEN_LIFETIME = process.env.REFRESH_TOKEN_LIFETIME || '7d';
+export function authMiddleware(req: IncomingMessage, res: ServerResponse) {
+  if (
+    req.url === '/api/user/login' ||
+    req.url === '/api/user/signup' ||
+    req.url === '/api/user/refresh'
+  ) {
+    return;
+  }
 
-export async function authorization(req: IncomingMessage, res: ServerResponse, cb: (req: IncomingMessage, res: ServerResponse) => void) {
-  if (req.url !== '/login' && req.url !== '/signup') {
-    const authHeader = req.headers.authorization;
-    console.log(' authHeader:', authHeader);
+  const accessToken = req.headers.authorization?.split(' ')[1];
 
-    if (!authHeader || !authHeader.startsWith('Bearer')) {
-      console.log('authHeader error');
-      return;
-    }
+  if (!accessToken) {
+    throw new Error('Unauthorized');
+  }
 
-    const token = authHeader.split(" ")[1];
-    const decoded = verifyToken(token, SECRET);
-    console.log(' decoded:', decoded);
+  const decoded = verifyAccessToken(accessToken);
 
-    if (!decoded) {
-      console.log('decoded error');
-      return;
-    }
+  if (!decoded) {
+    throw new Error('Invalid token');
   }
 }
-
-const verifyToken = (token: string, secret: string): JwtPayload | string | null => {
-  try {
-    return verify(token, secret);
-  } catch {
-    return null;
-  }
-};

@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { User } from '~/shared/api_types';
 import { typedFetchBaseQuery } from '~/shared/api/typedFetchBaseQuery';
+import { saveUser } from './store';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -12,13 +12,29 @@ export const userApi = createApi({
         method: 'POST',
         body,
       }),
+      async onQueryStarted(_queryArgument, { dispatch, queryFulfilled }) {
+          try {
+            const { data } = await queryFulfilled;
+            dispatch(saveUser(data))
+          } catch {
+            console.log('error saveUser')
+          }
+      },
     }),
-    login: build.mutation<User, unknown>({
+    login: build.mutation({
       query: (body) => ({
         url: '/user/login',
         method: "POST",
         body
-      })
+      }),
+      async onQueryStarted(_queryArgument, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(saveUser(data))
+        } catch {
+          console.log('error saveUser')
+        }
+    },
     })
   })
 })
