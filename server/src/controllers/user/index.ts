@@ -2,7 +2,7 @@ import { prisma } from '#config/db.ts';
 import { getBody } from '#utils/body.ts';
 import { getCookie, setCookie } from '#utils/cookie.ts';
 import { comparePassword, hashPassword } from '#utils/hash.ts';
-import { generateAccessToken, generateRefreshToken, getPayload, verifyAccessToken, verifyRefreshToken } from '#utils/jwtToken.ts';
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '#utils/jwtToken.ts';
 import { sendError, sendResponse } from '#utils/response.ts';
 import { Prisma } from '@prisma/client';
 import { IncomingMessage, ServerResponse } from 'http';
@@ -69,15 +69,20 @@ async function log_in(req: IncomingMessage, res: ServerResponse) {
   }
 }
 
-async function log_out(req: IncomingMessage, res: ServerResponse) {}
+async function log_out(req: IncomingMessage, res: ServerResponse) {
+  setCookie(res, [
+    'refreshToken',
+    "",
+    { secure: true, sameSite: 'strict', httpOnly: true, maxAge: 0 },
+  ]);
+  sendResponse(res, 200, { message: 'logout success' });
+}
 
 async function refresh(req: IncomingMessage, res: ServerResponse) {
   try {
     const refreshToken = getCookie(req).refreshToken;
-    console.log(' refreshToken:', refreshToken);
 
     const body = verifyRefreshToken(refreshToken) as Record<string, string>;
-    console.log(' body:', body);
 
     if (!body) {
       sendError(res, 401, 'Invalid token');
@@ -94,11 +99,32 @@ async function refresh(req: IncomingMessage, res: ServerResponse) {
   }
 }
 
+async function auto_login(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const refreshToken = getCookie(req).refreshToken;
+
+    const body = verifyRefreshToken(refreshToken) as Record<string, string>;
+
+    const result = await prisma.user.findFirst({
+      where: {
+        email: body.email,
+      },
+    });
+
+    const accessToken = generateAccessToken({ email: body.email });
+
+    sendResponse(res, 200, { user: { ...result, password: null }, accessToken });
+  } catch (error) {
+    sendError(res, 400, 'error');
+  }
+}
+
 export const userController = {
   sign_up,
   log_in,
   log_out,
   refresh,
+  auto_login,
 };
 
 

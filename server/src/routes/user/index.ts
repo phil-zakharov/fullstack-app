@@ -13,5 +13,8 @@ export const userRoutes: Route = {
   },
   refresh: {
     GET: userController.refresh
+  },
+  'auto-login': {
+    GET: userController.auto_login
   }
 }

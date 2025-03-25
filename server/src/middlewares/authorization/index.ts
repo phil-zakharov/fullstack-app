@@ -2,11 +2,7 @@ import { verifyAccessToken } from '#utils/jwtToken.ts';
 import { IncomingMessage, ServerResponse } from 'http';
 
 export function authMiddleware(req: IncomingMessage, res: ServerResponse) {
-  if (
-    req.url === '/api/user/login' ||
-    req.url === '/api/user/signup' ||
-    req.url === '/api/user/refresh'
-  ) {
+  if (req.url?.startsWith('/api/user')) {
     return;
   }
 
