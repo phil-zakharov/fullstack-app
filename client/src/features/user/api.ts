@@ -1,6 +1,8 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { typedFetchBaseQuery } from '~/shared/api/typedFetchBaseQuery';
 import { removeUser, saveUser } from './store';
+import { LoginForm } from './login/types';
+import { SignUpForm } from './sign_up/types';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -21,7 +23,7 @@ export const userApi = createApi({
       },
     }),
     signUp: build.mutation({
-      query: (body) => ({
+      query: (body: SignUpForm) => ({
         url: `user/signup`,
         method: 'POST',
         body,
@@ -36,7 +38,7 @@ export const userApi = createApi({
       },
     }),
     login: build.mutation({
-      query: (body) => ({
+      query: (body: LoginForm) => ({
         url: '/user/login',
         method: 'POST',
         body,

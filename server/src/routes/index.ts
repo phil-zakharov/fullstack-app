@@ -4,11 +4,13 @@ import { Route } from './types.ts';
 import { userRoutes } from './user/index.ts';
 import { sendResponse } from '#utils/response.ts';
 import { postRoutes } from './posts/index.ts';
+import { todoRoutes } from './todo/index.ts';
 
 const routes: Route = {
   api: {
     user: userRoutes,
     post: postRoutes,
+    todo: todoRoutes
   }
 };
 
