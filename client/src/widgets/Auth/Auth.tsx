@@ -1,5 +1,5 @@
 import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
-import { deepPurple } from '@mui/material/colors';
+import { deepPurple, purple } from '@mui/material/colors';
 import { useState } from 'react';
 import { useUserStore } from '~/shared/store/user';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -29,7 +29,7 @@ export function Auth() {
         {isAuth ? (
           <>
             <IconButton onClick={openMenu}>
-              <Typography>{user?.name}</Typography>
+              <Typography sx={{ mr: 2, color: purple[50] }}>{user?.name}</Typography>
               <Avatar alt={user?.name || ''} src={user?.avatar || ''} />
             </IconButton>
             <Menu

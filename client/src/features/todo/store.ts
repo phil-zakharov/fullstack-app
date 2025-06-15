@@ -2,29 +2,36 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { TodoItem } from './types';
 
 export interface TodoState {
-  newTodo: TodoItem,
-  todos: TodoItem[]
+  newTodo: TodoItem;
+  todos: TodoItem[];
 }
 
 const initialState: TodoState = {
   newTodo: {
-    title: ''
+    id: 0,
+    title: '',
+    completed: false,
   },
-  todos: []
-}
+  todos: [],
+};
 
 export const todoSlice = createSlice({
   name: 'todo',
   initialState,
   reducers: {
     setTodos(state, action: PayloadAction<TodoItem[]>) {
-      state.todos = action.payload
+      state.todos = action.payload;
     },
     addTodo(state, action: PayloadAction<TodoItem>) {
-      state.todos.push(action.payload)
-    }
-  }
-})
+      state.todos.push(action.payload);
+    },
+    updateTodo(state, action: PayloadAction<TodoItem>) {
+      const index = state.todos.findIndex((todo) => todo.id === action.payload.id)
 
-export const { setTodos, addTodo } = todoSlice.actions
-export default todoSlice.reducer
+      state.todos.splice(index, 1, action.payload)
+    }
+  },
+});
+
+export const { setTodos, addTodo, updateTodo } = todoSlice.actions;
+export default todoSlice.reducer;

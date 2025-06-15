@@ -1,14 +1,15 @@
-import { Box, Button, Container, Stack, TextField, Typography } from '@mui/material';
+import { Button, Container, Stack, TextField } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { useCreateTodoMutation, useLazyGetTodosQuery } from '~/features/todo/api';
 import { selectTodos } from '~/features/todo/selectors';
 import { createTodoSch } from '~/features/todo/todo.schema';
-import { TodoItem } from '~/features/todo/types';
+import * as T from '~/features/todo/types';
+import { TodoItem } from './TodoItem';
 
 export const TodoListPage = () => {
   const [getTodos] = useLazyGetTodosQuery();
-  const [createTodo] = useCreateTodoMutation()
+  const [createTodo] = useCreateTodoMutation();
 
   const todos = useSelector(selectTodos);
 
@@ -16,23 +17,21 @@ export const TodoListPage = () => {
     resolver: createTodoSch,
   });
 
-  const onSubmit = (data: TodoItem) => {
-    createTodo(data)
-    reset()
-  }
+  const onSubmit = (data: T.TodoItem) => {
+    createTodo(data);
+    reset();
+  };
 
   return (
     <Container maxWidth="sm">
-      <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ m: 3 }}>
+      <Stack component="form" onSubmit={handleSubmit(onSubmit)} sx={{ my: 3 }} gap={1}>
         <TextField label="Title" variant="outlined" {...register('title')} />
         <Button type="submit">Add</Button>
-      </Box>
+      </Stack>
       <Button onClick={() => getTodos(null)}>get all</Button>
-      <Stack>
+      <Stack gap={2} sx={{ mt: 2 }}>
         {todos.map((todo) => (
-          <Box key={todo.title}>
-            <Typography>{todo.title}</Typography>
-          </Box>
+          <TodoItem key={todo.id} {...todo} />
         ))}
       </Stack>
     </Container>

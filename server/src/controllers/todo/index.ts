@@ -4,13 +4,12 @@ import { sendResponse } from '#utils/response.ts';
 import { Prisma } from '@prisma/client';
 import { IncomingMessage, ServerResponse } from 'http';
 
-async function getAllTodos(req: IncomingMessage, res: ServerResponse) {
-  const todos = await prisma.todo.findMany();
-  console.log(' todos:', todos);
+async function getAll(req: IncomingMessage, res: ServerResponse) {
+  const todos = await prisma.todo.findMany({ orderBy: { id: 'asc' }} );
   sendResponse(res, 200, todos);
 }
 
-async function createTodo(req: IncomingMessage, res: ServerResponse) {
+async function create(req: IncomingMessage, res: ServerResponse) {
   const body = await getBody<Prisma.TodoCreateInput>(req);
 
   await prisma.todo.create({ data: body });
@@ -18,7 +17,17 @@ async function createTodo(req: IncomingMessage, res: ServerResponse) {
   sendResponse(res, 200, 'created');
 }
 
+async function update(req:IncomingMessage, res: ServerResponse) {
+  const body = await getBody<Prisma.TodoCreateManyInput>(req);
+  console.log(' body:', body);
+
+  await prisma.todo.update({ where: { id: body.id }, data: body })
+
+  sendResponse(res, 200, 'updated')
+}
+
 export const todoController = {
-  getAllTodos,
-  createTodo,
+  getAll,
+  create,
+  update,
 };

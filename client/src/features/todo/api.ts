@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { typedFetchBaseQuery } from '~/shared/api/typedFetchBaseQuery';
 import { TodoItem } from './types';
-import { setTodos } from './store';
+import { setTodos, updateTodo } from './store';
 
 export const todoApi = createApi({
   reducerPath: 'todoApi',
@@ -27,8 +27,18 @@ export const todoApi = createApi({
         method: "POST",
         body
       })
+    }),
+    updateTodo: build.mutation({
+      query: (body: TodoItem) => ({
+        url: 'todo/update',
+        method: 'POST',
+        body,
+      }),
+      onQueryStarted: (todoItem, { dispatch }) => {
+        dispatch(updateTodo(todoItem))
+      }
     })
   })
 })
 
-export const { useLazyGetTodosQuery, useCreateTodoMutation } = todoApi;
+export const { useLazyGetTodosQuery, useCreateTodoMutation, useUpdateTodoMutation } = todoApi;

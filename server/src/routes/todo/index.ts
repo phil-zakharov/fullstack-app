@@ -3,9 +3,12 @@ import { Route } from '#routes/types.ts';
 
 export const todoRoutes: Route = {
   create: {
-    POST: todoController.createTodo
+    POST: todoController.create
   },
   all: {
-    GET: todoController.getAllTodos,
+    GET: todoController.getAll,
+  },
+  update: {
+    POST: todoController.update
   }
 }

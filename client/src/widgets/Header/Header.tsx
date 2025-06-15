@@ -4,8 +4,8 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Auth } from '../Auth';
-import { Link } from 'react-router';
 import { Stack } from '@mui/material';
+import { Link } from '~/shared/ui/link';
 
 export function Header() {
   return (
