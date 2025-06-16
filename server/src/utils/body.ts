@@ -12,6 +12,7 @@ export async function getBody<T extends object>(
 
     req.on('end', () => {
       try {
+        console.log('>>body', body)
         const parsedBody = JSON.parse(body);
         res(parsedBody);
       } catch (error) {

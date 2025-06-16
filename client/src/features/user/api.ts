@@ -3,6 +3,7 @@ import { typedFetchBaseQuery } from '~/shared/api/typedFetchBaseQuery';
 import { removeUser, saveUser } from './store';
 import { LoginForm } from './login/types';
 import { SignUpForm } from './sign_up/types';
+import { PublicUser } from './types';
 
 export const userApi = createApi({
   reducerPath: 'userApi',
@@ -61,7 +62,34 @@ export const userApi = createApi({
         dispatch(removeUser());
       },
     }),
+    users: build.query<PublicUser[], void>({
+      query: () => ({
+        url: '/user/all',
+        method: 'GET',
+      }),
+    }),
+    addFriend: build.mutation<void, { email: string }>({
+      query: (body) => ({
+        url: '/user/friend',
+        method: 'PATCH',
+        body,
+      }),
+    }),
+    friends: build.query<PublicUser[], { email: string}>({
+      query: ({ email }) => ({
+        url: `/user/friend?email=${email}`,
+        method: "GET",
+      })
+    })
   }),
 });
 
-export const { useSignUpMutation, useLoginMutation, useAutoLoginQuery, useLazyLogoutQuery } = userApi;
+export const {
+  useSignUpMutation,
+  useLoginMutation,
+  useAutoLoginQuery,
+  useLazyLogoutQuery,
+  useUsersQuery,
+  useAddFriendMutation,
+  useLazyFriendsQuery
+} = userApi;

@@ -18,6 +18,7 @@ export function Header() {
           <Stack direction="row" flexGrow={1} gap={2}>
             <Link to="/">Main</Link>
             <Link to="/todo">Todos</Link>
+            <Link to="/users">Users</Link>
           </Stack>
           <div>
             <Auth />

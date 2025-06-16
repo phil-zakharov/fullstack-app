@@ -6,7 +6,7 @@ export const todoRoutes: Route = {
     POST: todoController.create
   },
   all: {
-    GET: todoController.getAll,
+    GET: todoController.all,
   },
   update: {
     POST: todoController.update

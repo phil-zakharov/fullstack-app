@@ -19,10 +19,24 @@ model User {
   password String
   name     String?
   avatar   String?
+  todos    Todo[]
+  posts    Post[]
+  friends  User[]  @relation("UserFriends")
+  friendOf User[]  @relation("UserFriends")
 }
 
 model Todo {
   id        Int     @id @default(autoincrement())
   title     String
   completed Boolean @default(false)
+  owner     User?   @relation(fields: [ownerId], references: [id])
+  ownerId   Int?
+}
+
+model Post {
+  id       Int    @id @default(autoincrement())
+  title    String
+  text     String
+  author   User?  @relation(fields: [authorId], references: [id])
+  authorId Int?
 }

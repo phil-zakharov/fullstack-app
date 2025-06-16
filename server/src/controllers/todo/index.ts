@@ -4,7 +4,7 @@ import { sendResponse } from '#utils/response.ts';
 import { Prisma } from '@prisma/client';
 import { IncomingMessage, ServerResponse } from 'http';
 
-async function getAll(req: IncomingMessage, res: ServerResponse) {
+async function all(req: IncomingMessage, res: ServerResponse) {
   const todos = await prisma.todo.findMany({ orderBy: { id: 'asc' }} );
   sendResponse(res, 200, todos);
 }
@@ -27,7 +27,7 @@ async function update(req:IncomingMessage, res: ServerResponse) {
 }
 
 export const todoController = {
-  getAll,
+  all,
   create,
   update,
 };
