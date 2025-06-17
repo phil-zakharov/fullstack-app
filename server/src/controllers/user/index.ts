@@ -1,4 +1,5 @@
 import { prisma } from '#config/db.ts';
+import { UserService } from '#services/db/User.ts';
 import { getCurrentUserInfo } from '#services/users/getUserInfo.ts';
 import { getBody } from '#utils/body.ts';
 import { getCookie, setCookie } from '#utils/cookie.ts';
@@ -14,9 +15,7 @@ async function sign_up(req: IncomingMessage, res: ServerResponse) {
 
     const hashedPassword = await hashPassword(body.password);
 
-    const result = await prisma.user.create({
-      data: Prisma.validator<Prisma.UserCreateInput>()({ ...body, password: hashedPassword }),
-    });
+    const result = await UserService.create(body, hashedPassword);
 
     const accessToken = generateAccessToken({ email: body.email });
     const refreshToken = generateRefreshToken({ email: body.email });
@@ -117,7 +116,9 @@ async function auto_login(req: IncomingMessage, res: ServerResponse) {
 
 async function all(req: IncomingMessage, res: ServerResponse) {
   try {
-    const result = await prisma.user.findMany({ select: { id: true, name: true, email: true } });
+    const currentUser = await getCurrentUserInfo(req);
+
+    const result = await prisma.user.findMany({ select: { id: true, name: true, email: true }, where: { NOT: { email: currentUser?.email }} });
 
     sendResponse(res, 200, result);
   } catch (error) {
@@ -173,14 +174,62 @@ async function add_friend(req: IncomingMessage, res: ServerResponse) {
   }
 }
 
+async function delete_friend(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const body = await getBody<{ email: string }>(req);
+
+    const currentUser = await getCurrentUserInfo(req);
+
+    if (!currentUser) {
+      throw new Error('current user serialize error');
+    }
+
+    const friend = await prisma.user.findFirst({
+      where: {
+        email: body.email,
+      },
+    });
+
+    if (!friend) {
+      throw new Error('friend not found');
+    }
+
+    await prisma.user.update({
+      where: {
+        id: currentUser?.id,
+      },
+      data: {
+        friends: {
+          disconnect: { id: friend.id },
+        },
+      },
+    });
+
+    await prisma.user.update({
+      where: {
+        id: friend.id,
+      },
+      data: {
+        friendOf: {
+          disconnect: { id: currentUser.id },
+        },
+      },
+    });
+
+    sendResponse(res, 200, 'ok');
+  } catch (error) {
+    sendError(res, 400, (error as Error).message);
+  }
+}
+
 async function get_user_friends(req: IncomingMessage, res: ServerResponse) {
   try {
     if (!req.url) {
-      throw new Error('url error')
+      throw new Error('url error');
     }
     const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
 
-    const query = Object.fromEntries(parsedUrl.searchParams.entries()) as { email: string};
+    const query = Object.fromEntries(parsedUrl.searchParams.entries()) as { email: string };
     const currentUser = await getCurrentUserInfo(req);
 
     if (!currentUser) {
@@ -192,7 +241,11 @@ async function get_user_friends(req: IncomingMessage, res: ServerResponse) {
       include: { friends: true },
     });
 
-    sendResponse(res, 200, result?.friends.map(({ id, name, email }) => ({ id, name, email })))
+    sendResponse(
+      res,
+      200,
+      result?.friends.map(({ id, name, email }) => ({ id, name, email })),
+    );
   } catch (error) {
     sendError(res, 400, (error as Error).message);
   }
@@ -206,5 +259,6 @@ export const userController = {
   auto_login,
   all,
   add_friend,
+  delete_friend,
   get_user_friends,
 };

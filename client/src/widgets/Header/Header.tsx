@@ -19,6 +19,7 @@ export function Header() {
             <Link to="/">Main</Link>
             <Link to="/todo">Todos</Link>
             <Link to="/users">Users</Link>
+            <Link to="/posts">Posts</Link>
           </Stack>
           <div>
             <Auth />

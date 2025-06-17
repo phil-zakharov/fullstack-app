@@ -1,41 +1,47 @@
-import { Box, Button, Divider, Stack, Typography } from '@mui/material';
-import { useEffect } from 'react';
-import { useAddFriendMutation, useLazyFriendsQuery, useUsersQuery } from '~/features/user/api';
-import { useUserStore } from '~/shared/store/user';
+import { Box, Button, Divider, IconButton, Stack, Typography } from '@mui/material';
+import { useCallback, useEffect } from 'react';
+import {
+  useAddFriendMutation,
+  useDeleteFriendMutation,
+  useLazyFriendsQuery,
+  useUsersQuery,
+} from '~/features/user/api';
+import { useUserSelector } from '~/shared/store/user';
+import CachedIcon from '@mui/icons-material/Cached';
 
-export const Users = () => {
+export const UsersPage = () => {
   const { data } = useUsersQuery();
   const [addFriend] = useAddFriendMutation();
+  const [deleteFriend] = useDeleteFriendMutation();
   const [getFriends, { data: friends }] = useLazyFriendsQuery();
 
-  const { user } = useUserStore();
+  const { user } = useUserSelector();
 
-  const handleAdd = async (email: string) => {
-    console.log(' email:', email);
-    try {
-      const resp = await addFriend({ email });
-      console.log(' resp:', resp);
-    } catch (error) {
-      console.log(' error:', error);
-    }
-  };
-
-  useEffect(() => {
+  const fetchFriends = useCallback(() => {
     if (user?.email) {
       getFriends({ email: user.email });
     }
   }, [getFriends, user?.email]);
 
+  useEffect(() => {
+    fetchFriends();
+  }, [fetchFriends]);
+
   return (
     <Box>
-      <Typography variant="h2">My Friends</Typography>
+      <Typography variant="h2">
+        My Friends
+        <IconButton onClick={fetchFriends} sx={{ ml: 1 }}>
+          <CachedIcon />
+        </IconButton>
+      </Typography>
       <Stack gap={1}>
         {friends?.map(({ id, name, email }) => (
           <Box key={id}>
             <Typography variant="h6">{name}</Typography>
             <Typography variant="body1">{email}</Typography>
-            <Button onClick={() => handleAdd(email)}>Add friend</Button>
-            <Divider />
+            <Button onClick={() => deleteFriend({ email })}>Delete friend</Button>
+            <Divider sx={{ mt: 1 }} />
           </Box>
         ))}
       </Stack>
@@ -45,8 +51,8 @@ export const Users = () => {
           <Box key={id}>
             <Typography variant="h6">{name}</Typography>
             <Typography variant="body1">{email}</Typography>
-            <Button onClick={() => handleAdd(email)}>Add friend</Button>
-            <Divider />
+            <Button onClick={() => addFriend({ email })}>Add friend</Button>
+            <Divider sx={{ mt: 1 }} />
           </Box>
         ))}
       </Stack>

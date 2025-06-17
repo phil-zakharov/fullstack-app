@@ -23,5 +23,6 @@ export const userRoutes: Route = {
   friend: {
     GET: userController.get_user_friends,
     PATCH: userController.add_friend,
+    DELETE: userController.delete_friend
   },
 };

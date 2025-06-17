@@ -1,7 +1,7 @@
 import { Avatar, IconButton, Menu, MenuItem, Typography } from '@mui/material';
 import { deepPurple, purple } from '@mui/material/colors';
 import { useState } from 'react';
-import { useUserStore } from '~/shared/store/user';
+import { useUserSelector } from '~/shared/store/user';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { DialogType } from './types';
 import { SignUp } from '~/features/user/sign_up';
@@ -9,7 +9,7 @@ import { Login } from '~/features/user/login';
 import { useLazyLogoutQuery } from '~/features/user/api';
 
 export function Auth() {
-  const { isAuth, user } = useUserStore();
+  const { isAuth, user } = useUserSelector();
   const [logout] = useLazyLogoutQuery();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

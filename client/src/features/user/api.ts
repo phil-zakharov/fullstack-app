@@ -75,6 +75,13 @@ export const userApi = createApi({
         body,
       }),
     }),
+    deleteFriend: build.mutation<void, { email: string }>({
+      query: (body) => ({
+        url: '/user/friend',
+        method: "DELETE",
+        body
+      })
+    }),
     friends: build.query<PublicUser[], { email: string}>({
       query: ({ email }) => ({
         url: `/user/friend?email=${email}`,
@@ -91,5 +98,6 @@ export const {
   useLazyLogoutQuery,
   useUsersQuery,
   useAddFriendMutation,
+  useDeleteFriendMutation,
   useLazyFriendsQuery
 } = userApi;

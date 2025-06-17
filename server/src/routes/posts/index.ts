@@ -3,6 +3,7 @@ import { Route } from '#routes/types.ts';
 
 export const postRoutes: Route = {
   posts: {
-    GET: postController.getAllPosts
+    GET: postController.all,
+    POST: postController.add,
   }
 }
